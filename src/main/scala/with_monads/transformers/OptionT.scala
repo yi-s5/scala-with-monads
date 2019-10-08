@@ -23,7 +23,6 @@ case class OptionT[F[_]: CMonad, A](value: F[Option[A]]) {
 object OptionT {
   implicit def monadForOptionT[F[_]: CMonad]: Monad[OptionT[F, *]] = new Monad[OptionT[F, *]] {
     def flatMap[A, B](fa: OptionT[F,A])(f: A => OptionT[F,B]): OptionT[F,B] = fa.flatMap(f)
-    def map[A, B](fa: OptionT[F,A])(g: A => B): OptionT[F,B] = fa.map(g)
     def pure[A](x: A): OptionT[F,A] = OptionT(CMonad[F].pure(Some(x)))
   }
 }
