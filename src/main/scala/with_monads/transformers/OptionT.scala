@@ -2,7 +2,7 @@ package with_monads.transformers
 
 import cats._
 import cats.implicits._
-import cats.{Monad => CMonad} // because we do not want cats monads and their silly tailRecM
+import cats.{Monad => CMonad} // because we do not want cats monads and their silly tailRecM... yet.
 import with_monads.Monad
 
 case class OptionT[F[_]: CMonad, A](value: F[Option[A]]) {
