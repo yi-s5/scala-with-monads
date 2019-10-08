@@ -1,19 +1,22 @@
 package with_monads
 
-trait WriterOps[A] {
-  def value(value: A): Writer[A]
-  def tell(entries: List[String]): Writer[A]
+import cats.Semigroup
+import cats.kernel.Monoid
+
+trait WriterOps[L, A] {
+  def value(value: A): Writer[L, A]
+  def tell(entries: L): Writer[L, A]
 }
 
-case class Writer[A](log: List[String], value: A) extends WriterOps[A] { 
-  def value(newValue: A): Writer[A]          = Writer(log, newValue)
-  def tell(entries: List[String]): Writer[A] = Writer(log ++ entries, value)
+case class Writer[L: Semigroup, A](log: L , value: A) extends WriterOps[L, A] { 
+  def value(newValue: A): Writer[L, A] = Writer(log, newValue)
+  def tell(entries: L): Writer[L, A]   = Writer(Semigroup.combine(log, entries), value)
 }
 
-object Writer {
-  implicit val monadForWriter: Monad[Writer] = new Monad[Writer] {
-    def pure[A](a: A): Writer[A] = Writer(List.empty, a)
-    def flatMap[A, B](fa: Writer[A])(g: A => Writer[B]): Writer[B] = 
+object Writer {m
+  implicit def monadForWriter[L: Semigroup](implicit ev: Monoid[L]): Monad[Writer[L, *]] = new Monad[Writer[L, *]] {
+    def pure[A](a: A): Writer[L, A] = Writer(Monoid.empty, a)
+    def flatMap[A, B](fa: Writer[L, A])(g: A => Writer[L, B]): Writer[L, B] = 
       g(fa.value).tell(fa.log)
   }
 }
