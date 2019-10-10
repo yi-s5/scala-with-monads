@@ -9,7 +9,7 @@ case class State[S,A](run: (S) => (S, A)) extends StateOps[S,A] {
 }
 
 object State {
-  def monadForState[S]: Monad[State[S,*]] = new Monad[State[S,*]] {
+  implicit def monadForState[S]: Monad[State[S,*]] = new Monad[State[S,*]] {
     def flatMap[A, B](fa: State[S,A])(g: A => State[S,B]): State[S,B] = {
       State(s => {
         val (s2, a) = fa.run(s)
