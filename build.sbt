@@ -25,3 +25,6 @@ resolvers += Resolver.sonatypeRepo("releases")
 addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full)
 
 libraryDependencies += "org.typelevel" %% "cats-core" % "1.6.0"
+
+
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % "test"
