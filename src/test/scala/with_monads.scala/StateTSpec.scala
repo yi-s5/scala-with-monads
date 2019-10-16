@@ -31,23 +31,29 @@ class StateTSpec extends FlatSpec {
     val pop: StateT[List, List[Int], Int] =
       StateT(list => list match {
         case Nil => List()
-        case head :: tl => List((tl, head), (tl, head-1))
+        case head :: tl => List((tl, head))
       })
 
     def push(a: Int): StateT[List, List[Int], Unit] = 
       StateT(list => List((a :: list, ())))
 
-    val popPopAddAndPush: StateT[List, List[Int], Int] = 
+    val branchingPop: StateT[List, List[Int], Int] =
+    StateT(list => list match {
+      case Nil => List()
+      case head :: tl => List((tl, head), (tl, head))
+    })
+
+    val branchingPopPopAddAndPush: StateT[List, List[Int], Int] = 
       for {
-        x <- pop
+        x <- branchingPop
         y <- pop
         _ <- push(x+y)
       } yield (x+y)
 
     // TODO: Figure this out
-    popPopAddAndPush.run(List(1,2,3)) should equal(List((List(3,3), 3)))
-    popPopAddAndPush.run(List()) should equal(List())
-    popPopAddAndPush.run(List(1)) should equal(List())
-    popPopAddAndPush.run(List(1,2)) should equal(List((List(3),3)))
+    branchingPopPopAddAndPush.run(List(1,2,3)) should equal(List((List(3,3), 3)))
+    branchingPopPopAddAndPush.run(List()) should equal(List())
+    branchingPopPopAddAndPush.run(List(1)) should equal(List())
+    branchingPopPopAddAndPush.run(List(1,2)) should equal(List((List(3),3)))
   }
 }
