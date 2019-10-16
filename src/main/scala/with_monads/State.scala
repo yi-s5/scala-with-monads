@@ -4,7 +4,7 @@ trait StateOps[S,A] {
   def runA(s: S): A
 }
 
-case class State[S,A](run: (S) => (S, A)) extends StateOps[S,A] {
+case class State[S, A](run: (S) => (S, A)) extends StateOps[S,A] {
   def runA(s: S): A = run(s)._2
 }
 
@@ -17,5 +17,6 @@ object State {
       })
     }
     def pure[A](a: A): State[S,A] = State(s => (s,a))
+
   }
 }
