@@ -38,7 +38,6 @@ class WriterSpec extends FlatSpec {
         case (None,    None)    => Some(append(Monad[Writer[List[A],*]].pure(1), x))
         case (Some(l), None)    => Some(append(l, x))
         case (None,    Some(r)) => Some(append(r, x))
-        // TODO: Fix this crap API
         case (Some(l), Some(r)) => Some(append(l.flatMap(x => r.value(r.value + x)), x))
       }
     }
