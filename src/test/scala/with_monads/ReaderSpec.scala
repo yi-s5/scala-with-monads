@@ -34,4 +34,7 @@ class ReaderSpec extends FlatSpec {
         corey  -> List(AdminAccess, WriteAccess))
   )
 
+  "Reader" should "interact with password login" in {
+    assert(false)
+  }
 }
