@@ -53,7 +53,7 @@ class ReaderSpec extends FlatSpec {
                 )
 
         def getListUserAuth(userOpt: Option[User]): Reader[Environment, Option[List[UserAuth]]] = Reader(
-            env => userOpt.map(user=>env.userAuthByUser.get(user).get)
+            env => userOpt.flatMap(user=>env.userAuthByUser.get(user))
         )
 
         def auth(username: String, password: String): Reader[Environment, Option[List[UserAuth]]] = {
