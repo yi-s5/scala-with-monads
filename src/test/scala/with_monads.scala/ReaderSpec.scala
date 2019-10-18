@@ -49,28 +49,29 @@ class ReaderSpec extends FlatSpec {
             for {
                 passwordOpt <- getUserPassword(username)
             } yield(
-                passwordOpt.fold(false)(correctPass => correctPass.equals(password))
+                passwordOpt.fold(false)(correctPass => correctPass == password)
                 )
 
-        def getListUserAuth(user: User): Reader[Environment, Option[List[UserAuth]]] = Reader(
-            env => env.userAuthByUser.get(user)
+        def getListUserAuth(userOpt: Option[User]): Reader[Environment, Option[List[UserAuth]]] = Reader(
+            env => userOpt.map(user=>env.userAuthByUser.get(user).get)
         )
 
         def auth(username: String, password: String): Reader[Environment, Option[List[UserAuth]]] = {
-            // val authorized = for {
-            //     bool <- validateUsernameAndPassword(username, password)
-            // } yield(bool)
+
+            val failedAuth:Reader[Environment, Option[List[UserAuth]]] = Reader(env => None)
 
             val getOptList = for {
-                    
                     userOpt     <- getUser(username)
-                    listAuthOpt <- getListUserAuth(userOpt.get)
+                    listAuthOpt <- getListUserAuth(userOpt)
                 } yield(listAuthOpt)
-            getOptList
-
+            
+            for {
+                bool <- validateUsernameAndPassword(username, password)
+                listAuthOpt <- if (bool) getOptList else failedAuth
+            } yield(listAuthOpt)
         }
 
-    assert(false)        
+    auth("yi.fu", "b35t p455w0rd Ev4!").run(env) should equal(env.userAuthByUser.get(yi))
 
     }
 }
