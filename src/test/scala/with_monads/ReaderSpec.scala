@@ -35,6 +35,28 @@ class ReaderSpec extends FlatSpec {
   )
 
   "Reader" should "interact with password login" in {
-    assert(false)
+    def getUser(username: String): Reader[Environment, Option[User]] = 
+      Reader(env => env.usersByUsername.get(username))
+    
+    def getUserPassword(username: String): Reader[Environment, Option[String]] =
+      Reader(env => env.usersByUsername.get(username).map(_.password))
+
+    def validateUsernameAndPassword(username: String, password: String): Reader[Environment, Boolean] = 
+      for {
+        userOpt <- getUser(username)
+        pwdOpt  <- getUserPassword(username)
+      } yield (userOpt.flatMap(_ => pwdOpt)
+                      .map(_ == password)
+                      .getOrElse(false))
+    
+    def getUserAuth(user: Option[User]): Reader[Environment, Option[List[UserAuth]]] = 
+      Reader(env => user.flatMap(env.userAuthByUser.get(_)))
+
+    def retrieveUserAuthForValidUser(username: String, password: String): Reader[Environment, Option[List[UserAuth]]] =
+      for {
+        isValid <- validateUsernameAndPassword(username, password)
+        userOpt <- getUser(username)
+        userAuthOpt <- getUserAuth(userOpt)
+      } yield (userAuthOpt)
   }
 }

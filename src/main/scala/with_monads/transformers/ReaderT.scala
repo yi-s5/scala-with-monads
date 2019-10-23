@@ -9,7 +9,7 @@ case class ReaderT[F[_]: Monad, A,B](run: A => F[B]) extends ReaderTOps[F,A,B] {
 }
 
 object ReaderT {
-    implicit def monadForStateT[F[_]: Monad, A]: Monad[ReaderT[F, A,*]] = new Monad[ReaderT[F, A,*]] {
+    implicit def monadForReaderT[F[_]: Monad, A]: Monad[ReaderT[F, A,*]] = new Monad[ReaderT[F, A,*]] {
         def flatMap[B, C](fa: ReaderT[F,A,B])(g: B => ReaderT[F,A,C]): ReaderT[F,A,C] = {
             ReaderT((a) => fa.run(a).flatMap(g(_).run(a)))
         }
