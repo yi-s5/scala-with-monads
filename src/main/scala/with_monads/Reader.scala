@@ -1,8 +1,6 @@
 package with_monads
 
-case class Reader[A,B](run: A => B) {
-  
-}
+case class Reader[A,B](run: A => B) {}
 
 object Reader {
   implicit def monadForReader[C]: Monad[Reader[C,*]] = new Monad[Reader[C,*]] {
