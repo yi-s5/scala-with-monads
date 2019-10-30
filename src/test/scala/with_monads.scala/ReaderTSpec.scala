@@ -59,8 +59,8 @@ class ReaderTSpec extends FlatSpec {
             for {
                 user              <- getUser(username)
                 isPasswordCorrect <- validateUsernameAndPassword(username, password)
-                listAuthOpt       <- getListUserAuth(user)
-              } yield (if (isPasswordCorrect) listAuthOpt else List.empty)
+                listAuthOpt       <- if (isPasswordCorrect) getListUserAuth(user) else ReaderT[Option, Environment, List[UserAuth]](_ => None)
+              } yield (listAuthOpt)
         }
 
     auth("yi.fu", "b35t p455w0rd Ev4!").run(env) should equal(env.userAuthByUser.get(yi))

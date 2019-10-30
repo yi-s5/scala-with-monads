@@ -49,8 +49,10 @@ class ReaderSpec extends FlatSpec {
             for {
                 passwordOpt <- getUserPassword(username)
             } yield(
-                passwordOpt.fold(false)(correctPass => correctPass == password)
+                // passwordOpt.fold(false)(correctPass => correctPass == password)
+                passwordOpt.map(_ == password).getOrElse(false)
                 )
+                
 
         def getListUserAuth(userOpt: Option[User]): Reader[Environment, Option[List[UserAuth]]] = Reader(
             env => userOpt.flatMap(user=>env.userAuthByUser.get(user))
