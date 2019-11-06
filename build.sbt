@@ -11,20 +11,30 @@ scalaVersion := "2.12.8"
 
 // It's possible to define many kinds of settings, such as:
 
-name := "hello-world"
-organization := "ch.epfl.scala"
-version := "1.0"
+lazy val root = (project in file("."))
+    .settings(
+        name := "hello-world",
+        organization := "ch.epfl.scala",
+        version := "1.0",
 
-scalacOptions += "-Ypartial-unification"
+        //mainClass in assembly := Some("with_monads.Main"),
+        mainClass in Compile := Some("with_monads.Main"),
+        mainClass in run := Some("with_monads.Main"),
 
-// Note, it's not required for you to define these three settings. These are
-// mostly only necessary if you intend to publish your library's binaries on a
-// place like Sonatype or Bintray.
-resolvers += Resolver.sonatypeRepo("releases")
+        scalacOptions += "-Ypartial-unification",
 
-addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full)
+        // Note, it's not required for you to define these three settings. These are
+        // mostly only necessary if you intend to publish your library's binaries on a
+        // place like Sonatype or Bintray.
+        resolvers += Resolver.sonatypeRepo("releases"),
 
-libraryDependencies += "org.typelevel" %% "cats-core" % "1.6.0"
+        addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full),
+
+        libraryDependencies += "org.typelevel" %% "cats-core" % "1.6.0",
 
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % "test"
+        libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % "test"
+
+    )
+
+
